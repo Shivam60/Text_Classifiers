@@ -4,13 +4,13 @@ from nltk.corpus import stopwords,wordnet
 
 stop =  stop= stopwords.words('english') + list(string.punctuation)
 cwd=os.getcwd()
-train=cwd+"/input/train/"
-categories=os.listdir(train)
+test=cwd+"/input/test/"
+categories=os.listdir(test)
 bag={}
 cnt=0
 for i in categories:
     col={}
-    filenames=train+i+"/"
+    filenames=test+i+"/"
     for j in os.listdir(filenames):
         print i, "Processing File: ",j,". Number of Files Processed: ",cnt
         tmp1=[]
@@ -30,7 +30,7 @@ for i in categories:
         cnt+=1
     bag[i]=col
 #    print bag
-with open(os.getcwd()+r'/input/jsons/'+r'train.json','w') as file1:
+with open(os.getcwd()+r'/input/jsons/'+r'test.json','w') as file1:
     dp=json.dumps(bag, sort_keys=True, indent=4, separators=(',', ': '))
     file1.write(dp)
 file1.close()
