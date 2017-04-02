@@ -17,10 +17,12 @@ for i in categories:
         with open(filenames+j,'r') as file1:
             doc=file1.read()
             ndoc="" 
+            #ndoc=" ".join([k for k in doc.split() if k.isalnum() or k==" " or k=="\n"])
             for k in doc:
                 if k.isalnum() or k==" " or k=="\n":
                     ndoc+=k
             doc=""
+            []
             for word in ndoc.split():
                 if wordnet.synsets(word) and word not in stop:
                     doc+=word.lower()+" "
