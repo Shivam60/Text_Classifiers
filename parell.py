@@ -1,10 +1,10 @@
-import os,string,json,time
+import os,string,json,time,multiprocessing,enchant
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords,wordnet
-import multiprocessing
+from nltk.corpus import stopwords
 from multiprocessing import Process
 bag={}
-stop =  stop= stopwords.words('english') + list(string.punctuation)
+words=enchant.Dict("en_US")
+stop = stopwords.words('english') + list(string.punctuation)
 cwd=os.getcwd()
 train=cwd+r"/input/train/"
 def info(title):
@@ -30,7 +30,7 @@ def process_folder(t):
         finally:
             file1.close()
         doc=" ".join([k for k in doc.split() if k.isalnum() or k==" " or k=="\n"])
-        doc=" ".join([word.lower() for word in doc.split() if wordnet.synsets(word) and word not in stop ])
+        doc=" ".join([word.lower() for word in doc.split() if word not in stop and words.check(word) ])
         dic[str(i)]=doc
     try:
         with open(os.getcwd()+r'/input/jsons/'+subfolder+r'.json','w') as file1:

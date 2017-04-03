@@ -1,9 +1,10 @@
 Project name: Text_Classifier.
 
-Description: A description of your project follows. A good description is clear, short, and to the point. Describe the importance of your project, and what it does.
+The Basic Idea is that if you give sample text files which are in sub folders where subfolders are the respective category of that file. What This Project aims at doing is make a naive bayes classifier which can predic unclassified text files. The aim is to reach a greated than 85% classification on the given dataset.
 
-Table of Contents: Optionally, include a table of contents in order to allow other people to quickly navigate especially long or detailed READMEs.
-
+Table of Contents: 
+1) Description of respective Modules or python files
+2) Algorithms used in respective Modules or files
 Installation: Installation is the next section in an effective README. Tell other users how to install your project locally. Optionally, include a gif to make the process even more clear for other people.
 
 Usage: The next section is usage, in which you instruct other people on how to use your project after they’ve installed it. This would also be a good place to include screenshots of your project in action.
