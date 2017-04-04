@@ -56,7 +56,7 @@ if __name__ == '__main__':
     results = pool.map_async(process_folder, tasks)
     pool.close()
     pool.join()
-    files=os.listdir(os.getcwd()+r'/input/jsons/',)
+    files=os.listdir(os.getcwd()+r'/input/jsons/')
     for i in files:
         try:
             with open(os.getcwd()+r'/input/jsons/'+i,'r') as file1:

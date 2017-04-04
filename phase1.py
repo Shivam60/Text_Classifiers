@@ -1,15 +1,15 @@
-import os,string,json,time
+import os,string,json,time,enchant
 from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords,wordnet
-
+from nltk.corpus import stopwords
+start=time.time()
+words=enchant.Dict("en_US")
+print "Program started at: ",start
 stop =  stop= stopwords.words('english') + list(string.punctuation)
 cwd=os.getcwd()
 train=cwd+"/input/train/"
 categories=os.listdir(train)
 bag={}
 cnt=0
-start=time.time()
-print "Program started at: ",start
 for i in categories:
     col={}
     filenames=train+i+"/"
@@ -31,7 +31,7 @@ for i in categories:
                     doc+=word.lower()+" "
             '''
             doc=" ".join([k for k in doc.split() if k.isalnum() or k==" " or k=="\n"])
-            doc=" ".join([word.lower() for word in doc.split() if wordnet.synsets(word) and word not in stop ])                    
+            doc=" ".join([word.lower() for word in doc.split() if words.check(word) and word not in stop ])                    
             tmp1.append(doc)
         file1.close()
         col[str(i)+"_"+str(j)]=tmp1

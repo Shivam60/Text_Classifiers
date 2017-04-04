@@ -12,7 +12,7 @@ def process_folder(t):
     path=t[0]
     subfolder=t[1]
     dic={}
-    #info('Processing folder '+subfolder)
+
     filenames=path+subfolder+r'/'
     for i in os.listdir(filenames):
         try:
@@ -55,7 +55,7 @@ if __name__ == '__main__':
         lis.append(t)
     for i in lis:
         i.join()
-    files=os.listdir(os.getcwd()+r'/input/jsons/',)
+    files=os.listdir(os.getcwd()+r'/input/jsons/')
     for i in files:
         try:
             with open(os.getcwd()+r'/input/jsons/'+i,'r') as file1:
