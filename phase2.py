@@ -1,6 +1,7 @@
 import json,os
 import pandas as pd
-
+start=time.time()
+print "Program started at: ",start
 vocap=set()
 fin={}
 with open(os.getcwd()+r'/input/jsons/'+r'train.json','r') as file1:
@@ -30,3 +31,6 @@ with open(os.getcwd()+r'/input/jsons/vocap.json','w') as file1:
     dp=json.dumps(fin, sort_keys=True, indent=4, separators=(',', ': '))
     file1.write(dp)
 file1.close()
+end=time.time()
+print "Program ended at: ",end
+print "Total Time to process: ",end-start
