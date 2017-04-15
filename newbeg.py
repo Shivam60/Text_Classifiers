@@ -50,20 +50,19 @@ if __name__ == '__main__':
     dtm = coo_matrix((data, (rows, cols)), shape=(ndocs, nvocab), dtype=np.intc)
     print dtm
     cat_list=[]
-    cat_dict={}
+    cat_prob={}
     cat_list_value={} #a list of each category where the values indicate the particulat docs belonging to it
     vocab_value={} #for each vocab write the position  the occuring word
     for i in docnames: #all categories are arranged in the order of matrix representing each row's term frequencey count
     	n=i.split('_')
     	cat_list.append(n[0])
-    	cat_dict[n[0]]=0
-    #for probablity of each category
+    	cat_prob[n[0]]=0.0  #for probablity of each category
     for i in xrange(len(cat_list)):
-    	cat_dict[cat_list[i]]+=1.0
+    	cat_prob[cat_list[i]]+=1.0
     	cat_list_value[cat_list[i]]=[]
-    total_val=sum(cat_dict.values())
-    for i in cat_dict:
-    	cat_dict[i]=cat_dict[i]/total_val
+    total_val=sum(cat_prob.values())
+    for i in cat_prob:
+    	cat_prob[i]=cat_prob[i]/total_val
     #for each vocab write the position  the occuring word
     for i in xrange(len(vocab)):
     	vocab_value[vocab[i]]=i
@@ -73,8 +72,9 @@ if __name__ == '__main__':
     	a.append(i)
     	cat_list_value[cat_list[i]]=a
     train_js={}
+    train_js['vocab_value']=vocab_value    
     train_js['cat_list']=cat_list
-    train_js['cat_dict']=cat_dict
+    train_js['cat_prob']=cat_prob
     train_js['cat_list_value']=cat_list_value
     with open(os.getcwd()+r'/input/jsons/'+"trained",'w') as file1:
     	dp=json.dumps(train_js, sort_keys=True, indent=4, separators=(',', ': '))

@@ -1,8 +1,4 @@
 {
-    "cat_dict": {
-        "chinese": 0.75,
-        "japanese": 0.25
-    },
     "cat_list": [
         "japanese",
         "chinese",
@@ -18,5 +14,25 @@
         "japanese": [
             0
         ]
+    },
+    "cat_prob": {
+        "chinese": 0.75,
+        "japanese": 0.25
+    },
+    "vocab": [
+        "beijing",
+        "chinese",
+        "tokyo",
+        "japan",
+        "shanghai",
+        "macao"
+    ],
+    "vocab_value": {
+        "beijing": 0,
+        "chinese": 1,
+        "japan": 3,
+        "macao": 5,
+        "shanghai": 4,
+        "tokyo": 2
     }
 }
