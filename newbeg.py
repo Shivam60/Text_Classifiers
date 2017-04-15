@@ -1,73 +1,87 @@
 import json,os,time
-import pandas as pd
-from multiprocessing.dummy import Pool as ThreadPool
 from multiprocessing import Pool
-vocap=set()
-fin={}
-def process_category(arg):
-    threads=20
-    files=[]
-    category_name=arg[0]
-    category_files=arg[1]
-    threads=arg=[2]
-    for i in category_files:
-        files.append([category_name,i])
-    pool = ThreadPool(threads) 
-    results = pool.map(process_subfile,files)
-    a=set()
-    for i in results:
-        a=a.union(i)
-    return a
-def process_subfile(args):
-    category_name=arg[0]
-    file_name=args[1]
-    d=set()
-    try:
-        with open(os.getcwd()+r'/input/jsons/train-multi.json','r') as file1:
-            dp=file1.read()
-            file1.close()
-    except IOError as err:
-        print err
-    finally:
-        bag=json.loads(dp)
-    a=bag[category_name][file_name]    
-    b=a.split()
-    return set(b)
+from multiprocessing.dummy import Pool as ThreadPool
+import numpy as np
+import scipy.io
+from scipy.sparse import coo_matrix
 if __name__ == '__main__':
     start=time.time()
     print "Program started at: ",start
    # processes_limit=int(sys.argv[1])
    # threads=int(sys.argv[2])
-    processes_limit=3
-    threads=20
-    print "Program started at: ",start
-    vocap=set()
-    fin={}
+    bag={}
     try:
-        with open(os.getcwd()+r'/input/jsons/train-multi.json','r') as file1:
+        with open(r'/home/shivam/Programing/Current_Projects/Text_Classifiers/input/jsons/train-multi.json','r') as file1:
             dp=file1.read()    
             file1.close()
-        
+	    bag=json.loads(dp)
     except IOError as err:
         print err
-    finally:
-        bag=json.loads(dp)
-    lit=[]
-    mlit=[]
-    a=0
-    for i in bag:
-        lit2=[]
-        for keys in bag[i]:
-            lit2.append(keys)
-        lit2=[i,lit2,threads]
-        mlit.append(lit2)
-    print len(mlit)
-    p = Pool(processes=processes_limit)
-    results=p.map(process_category, mlit)
-    ans=set()
-    for i in results:
-        ans=ans.union(i)
-    print ans
+    indd={}
+    for cat in bag:
+    	for sub in bag[cat]:
+    		indd[str(cat)+"_"+str(sub)]=str(bag[cat][sub]).split()
+    n_nonzero = 0
+    vocab=set()
+    for docterms in indd.values():
+    	unique_terms = set(docterms)
+    	vocab |= unique_terms
+    	n_nonzero += len(unique_terms)
+    docnames = list(indd.keys())
+    docnames = np.array(docnames)
+    vocab = np.array(list(vocab))
+    vocab_sorter = np.argsort(vocab)
+    ndocs = len(docnames)
+    nvocab = len(vocab)
+    data = np.empty(n_nonzero, dtype=np.intc)
+    rows = np.empty(n_nonzero, dtype=np.intc)
+    cols = np.empty(n_nonzero, dtype=np.intc)
+    ind = 0
+    for docname, terms in indd.items():
+    	term_indices = vocab_sorter[np.searchsorted(vocab, terms, sorter=vocab_sorter)]
+    	uniq_indices, counts = np.unique(term_indices, return_counts=True)
+    	n_vals = len(uniq_indices)
+    	ind_end = ind + n_vals
+    	data[ind:ind_end] = counts
+    	cols[ind:ind_end] = uniq_indices
+    	doc_idx = np.where(docnames == docname)
+    	rows[ind:ind_end] = np.repeat(doc_idx, n_vals)
+    	ind = ind_end
+    dtm = coo_matrix((data, (rows, cols)), shape=(ndocs, nvocab), dtype=np.intc)
+    print dtm
+    cat_list=[]
+    cat_dict={}
+    cat_list_value={} #a list of each category where the values indicate the particulat docs belonging to it
+    vocab_value={} #for each vocab write the position  the occuring word
+    for i in docnames: #all categories are arranged in the order of matrix representing each row's term frequencey count
+    	n=i.split('_')
+    	cat_list.append(n[0])
+    	cat_dict[n[0]]=0
+    #for probablity of each category
+    for i in xrange(len(cat_list)):
+    	cat_dict[cat_list[i]]+=1.0
+    	cat_list_value[cat_list[i]]=[]
+    total_val=sum(cat_dict.values())
+    for i in cat_dict:
+    	cat_dict[i]=cat_dict[i]/total_val
+    #for each vocab write the position  the occuring word
+    for i in xrange(len(vocab)):
+    	vocab_value[vocab[i]]=i
+    #for each cat write the position of docs belonging to a category
+    for i in xrange(len(cat_list)):
+    	a=cat_list_value[cat_list[i]]
+    	a.append(i)
+    	cat_list_value[cat_list[i]]=a
+    train_js={}
+    train_js['cat_list']=cat_list
+    train_js['cat_dict']=cat_dict
+    train_js['cat_list_value']=cat_list_value
+    with open(os.getcwd()+r'/input/jsons/'+"trained",'w') as file1:
+    	dp=json.dumps(train_js, sort_keys=True, indent=4, separators=(',', ': '))
+    	file1.write(dp)
+    	file1.close()
+    scipy.io.mmwrite(os.getcwd()+r'/input/jsons/'+"dtm",dtm)
+    print train_js
     end=time.time()
     print "Program ended at: ",end
     print "Total Time to process: ",end-start

@@ -1,0 +1,22 @@
+{
+    "cat_dict": {
+        "chinese": 0.75,
+        "japanese": 0.25
+    },
+    "cat_list": [
+        "japanese",
+        "chinese",
+        "chinese",
+        "chinese"
+    ],
+    "cat_list_value": {
+        "chinese": [
+            1,
+            2,
+            3
+        ],
+        "japanese": [
+            0
+        ]
+    }
+}
