@@ -1,6 +1,17 @@
 import scipy.io
 from scipy.sparse import coo_matrix
-import json,os,time
+import json,os,time,math,operator,enchant,string
+import numpy as np
+from nltk.corpus import stopwords
+words=enchant.Dict("en_US")
+stop = stopwords.words('english') + list(string.punctuation)
+
+def preprocess_text(arg):
+	arg=" ".join([k for k in arg.split() if k.isalnum() or k==" " or k=="\n"])
+	arg=" ".join([word for word in arg.split() if word not in stop and words.check(word)])
+	arg=" ".join([k.lower() for k in arg.split()])
+	arg=" ".join(k for k in voc)
+	return arg.split()
 if __name__ == '__main__':
 	train_js={}
 	dt=scipy.io.mmread(os.getcwd()+r'/input/jsons/'+"dtm") #loading matrix
@@ -18,18 +29,27 @@ if __name__ == '__main__':
 	cat_list_value=train_js['cat_list_value']
 	vocab_value=train_js['vocab_value']
 	voc=train_js['vocab']
-	sent="Chinese Chinese Chinese Tokyo Japan".split()
-	print cat_list_value
+	
+	sent=preprocess_text("Chinese Chinese Chinese Tokyo Japan")
+	print sent
+	proab={}
+	for keys in cat_prob:
+		proab[keys]=0.0
 	for i in xrange(len(sent)):
 		sent[i]=sent[i].lower()
 	for key in cat_prob: #for a particluar category
 		cat=key #find the category name
 		cat_present_doc=cat_list_value[cat] #find the docs present in the categories
 		for word in sent: #for each word
+			words_in_class=0 #to find the vocab of a class
 			word_freq_class=0
 			vocab_val=vocab_value[word] #find the index of each word in our vocab 
 			for i in xrange(len(cat_present_doc)):
 				word_freq_class+=dtm[cat_present_doc[i],vocab_val]
-			word_freq_class+=1
-			print word, cat, word_freq_class
-
+				words_in_class+=np.sum(dtm[cat_present_doc[i]])
+			word_freq_class+=1			
+			proab[cat]+=math.log(float(word_freq_class)/(float(words_in_class)+len(voc))) #to calculate the probablity by computing its log instead and adding 
+		proab[cat]+=math.log(float(cat_prob[cat]))#adding naives posterior probablity of the category
+	sorted_proab = sorted(proab.items(), key=operator.itemgetter(1))#sorting the dicitionary by values in ascending value
+	print(sorted_proab)
+ 	print(sorted_proab[len(sorted_proab)-1][0])
