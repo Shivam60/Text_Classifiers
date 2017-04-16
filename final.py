@@ -7,11 +7,11 @@ words=enchant.Dict("en_US")
 stop = stopwords.words('english') + list(string.punctuation)
 
 def preprocess_text(arg):
-	arg=" ".join([k for k in arg.split() if k.isalnum() or k==" " or k=="\n"])
-	arg=" ".join([word for word in arg.split() if word not in stop and words.check(word)])
-	arg=" ".join([k.lower() for k in arg.split()])
-	arg=" ".join(k for k in voc)
-	return arg.split()
+	arg=[k for k in arg if k.isalnum() or k==" " or k=="\n"]
+	arg=[word for word in arg if word not in stop and words.check(word)]
+	arg=[k.lower() for k in arg]
+	arg=[k for k in voc]
+	return arg
 if __name__ == '__main__':
 	train_js={}
 	dt=scipy.io.mmread(os.getcwd()+r'/input/jsons/'+"dtm") #loading matrix
@@ -31,7 +31,6 @@ if __name__ == '__main__':
 	voc=train_js['vocab']
 	
 	sent=preprocess_text("Chinese Chinese Chinese Tokyo Japan")
-	print sent
 	proab={}
 	for keys in cat_prob:
 		proab[keys]=0.0

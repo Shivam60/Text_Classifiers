@@ -54,7 +54,6 @@ def join_JSON():
             dp=file1.read()
             dp2=json.loads(dp)
             for cat in dp2:
-		print cat
 	        bag[str(cat)]=dp2[cat]
             file1.close()
     with open(os.getcwd()+r'/input/jsons/train-multi.json','w') as file1:
@@ -125,7 +124,6 @@ if __name__ == '__main__':
     	rows[ind:ind_end] = np.repeat(doc_idx, n_vals)
     	ind = ind_end
     dtm = coo_matrix((data, (rows, cols)), shape=(ndocs, nvocab), dtype=np.intc)
-    print dtm
     cat_list=[]
     cat_prob={}
     cat_list_value={} #a list of each category where the values indicate the particulat docs belonging to it
@@ -150,7 +148,6 @@ if __name__ == '__main__':
     	cat_list_value[cat_list[i]]=a
     train_js={}
     train_js['vocab']=list(voc)
-    print train_js['vocab']
     train_js['vocab_value']=vocab_value    
     train_js['cat_list']=cat_list
     train_js['cat_prob']=cat_prob
